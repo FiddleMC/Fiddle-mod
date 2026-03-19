@@ -8,13 +8,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.client.resources.server.ServerPackManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
@@ -23,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.fiddlemc.fiddle.client.clientview.mixin.ClientCommonPacketListenerImplAccessor;
 import org.fiddlemc.fiddle.client.moredatadriven.TemporaryRegistryModifiers;
 import org.fiddlemc.fiddle.impl.branding.FiddleNamespace;
+import org.fiddlemc.fiddle.impl.moredatadriven.clientmod.ClientModCustomContentPacketPayload;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -37,9 +34,6 @@ public final class FiddleProtocol {
     private static final Identifier CLIENT_MOD_DETECTION_PACKET_ID = Identifier.fromNamespaceAndPath(FiddleNamespace.FIDDLE, "detect_client_mod");
     private static final int MIN_PROTOCOL_VERSION = 1;
     private static final int MAX_PROTOCOL_VERSION = 1;
-
-    private static final Identifier CLIENT_MOD_CUSTOM_CONTENT_PACKET_ID = Identifier.fromNamespaceAndPath(FiddleNamespace.FIDDLE, "custom_content");
-    private static final CustomPacketPayload.Type<?> CLIENT_MOD_CUSTOM_CONTENT_PACKET_PAYLOAD_TYPE = new CustomPacketPayload.Type<>(CLIENT_MOD_CUSTOM_CONTENT_PACKET_ID);
 
     private static final AtomicReference<ClientModState> state = new AtomicReference<>(ClientModState.IDLE);
 
@@ -79,12 +73,13 @@ public final class FiddleProtocol {
             // We did not understand this protocol
             return CompletableFuture.completedFuture(null);
         });
-        PayloadTypeRegistry.configurationS2C().register(CLIENT_MOD_CUSTOM_CONTENT_PACKET_PAYLOAD_TYPE, (StreamCodec) StreamCodec.unit((CustomPacketPayload) () -> CLIENT_MOD_CUSTOM_CONTENT_PACKET_PAYLOAD_TYPE));
-        ClientConfigurationNetworking.registerGlobalReceiver(CLIENT_MOD_CUSTOM_CONTENT_PACKET_PAYLOAD_TYPE, (payload, context) -> {
+        PayloadTypeRegistry.configurationS2C().register(ClientModCustomContentPacketPayload.TYPE, ClientModCustomContentPacketPayload.STREAM_CODEC);
+        ClientConfigurationNetworking.registerGlobalReceiver(ClientModCustomContentPacketPayload.TYPE, (payload, context) -> {
             System.out.println("Received custom content " + FiddleProtocol.getState());
             changeState(ClientModState.CLIENT_MOD_DETECTED, ClientModState.RECEIVED_CUSTOM_CONTENT);
             // Add the received content
             TemporaryRegistryModifiers.prepareToAddCustomContent();
+            System.out.println("Parsed content: " + payload.getContent());
             TemporaryRegistryModifiers.addCustomContent(
                 List.of(
                     Pair.of(Identifier.parse("example:test"), new Block(BlockBehaviour.Properties.of().setId(ResourceKey.create(BuiltInRegistries.BLOCK.key(), Identifier.parse("example:test")))))
