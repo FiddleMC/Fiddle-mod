@@ -8,6 +8,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.resources.server.ServerPackManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -17,6 +20,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.fiddlemc.fiddle.client.clientview.mixin.ClientCommonPacketListenerImplAccessor;
 import org.fiddlemc.fiddle.client.moredatadriven.TemporaryRegistryModifiers;
 import org.fiddlemc.fiddle.impl.branding.FiddleNamespace;
 import java.util.List;
@@ -95,13 +99,20 @@ public final class FiddleProtocol {
         ClientLoginConnectionEvents.INIT.register((handler, client) -> {
             FiddleProtocol.changeState(ClientModState.IDLE, ClientModState.HANDSHAKE_STARTED);
         });
-        ClientConfigurationConnectionEvents.INIT.register((handler, client) -> {
+        ClientConfigurationConnectionEvents.START.register((handler, client) -> {
+            // Make sure the state is valid
             while (true) {
                 if (FiddleProtocol.getState() == ClientModState.CLIENT_MOD_DETECTED) {
-                    return;
+                    // Force accepting of packs
+                    System.out.println("Forcing accepting of packs");
+                    ClientCommonPacketListenerImplAccessor accessor = (ClientCommonPacketListenerImplAccessor) handler;
+                    ServerData serverData = accessor.getServerData();
+                    serverData.setResourcePackStatus(ServerData.ServerPackStatus.ENABLED);
+
+                    break;
                 }
                 if (FiddleProtocol.tryChangeState(ClientModState.HANDSHAKE_STARTED, ClientModState.CLIENT_MOD_NOT_DETECTED)) {
-                    return;
+                    break;
                 }
                 Thread.onSpinWait();
             }

@@ -1,15 +1,21 @@
 package org.fiddlemc.fiddle.client.moredatadriven;
 
 import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.objects.ObjectList;
+import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import org.fiddlemc.fiddle.client.moredatadriven.mixin.MappedRegistryAccessor;
+import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A wrapper around a registry, that can make temporarily additions.
@@ -17,6 +23,8 @@ import java.util.List;
 public abstract class TemporaryRegistryModifier<T, R extends MappedRegistry<T>> {
 
     public final R registry;
+
+    private @Nullable List<Pair<Identifier, T>> resourcesAdded = null;
 
     TemporaryRegistryModifier(R registry) {
         this.registry = registry;
@@ -44,16 +52,48 @@ public abstract class TemporaryRegistryModifier<T, R extends MappedRegistry<T>> 
     }
 
     public void addAndRefreeze(List<Pair<Identifier, T>> resources) {
-        for (Pair<Identifier, T> resource : resources) {
-            Registry.register(this.registry, resource.left(), resource.right());
+        if (!resources.isEmpty()) {
+            this.resourcesAdded = resources;
+            for (Pair<Identifier, T> resource : resources) {
+                Registry.register(this.registry, resource.left(), resource.right());
+            }
+            this.refreeze();
         }
-        this.refreeze();
     }
 
     public void remove() {
+        if (this.resourcesAdded == null) return;
         this.unfreeze();
-        // TODO
+        for (int i = this.resourcesAdded.size() - 1; i >= 0; i--) {
+            Pair<Identifier, T> resource = this.resourcesAdded.get(i);
+            this.remove(resource.left(), resource.right());
+        }
         this.refreeze();
+        this.resourcesAdded = null;
+    }
+
+    public void remove(Identifier identifier, T resource) {
+
+        // Get the resource key
+        ResourceKey<T> key = ResourceKey.create(this.registry.key(), identifier);
+
+        // Get the inner data structures of the registry
+        MappedRegistryAccessor<T> accessor = this.getRegistryAccessor();
+        Map<ResourceKey<T>, Holder.Reference<T>> byKey = accessor.getByKey();
+        Map<Identifier, Holder.Reference<T>> byLocation = accessor.getByLocation();
+        Map<T, Holder.Reference<T>> byValue = accessor.getByValue();
+        Map<ResourceKey<T>, RegistrationInfo> registrationInfos = accessor.getRegistrationInfos();
+        ObjectList<Holder.Reference<T>> byId = accessor.getById();
+        var toId = accessor.getToId();
+
+        // Remove the resource from the inner data structures
+        byKey.remove(key);
+        byLocation.remove(identifier);
+        byValue.remove(resource);
+        int id = toId.removeInt(resource);
+        byId.remove(id);
+        registrationInfos.remove(key);
+
     }
 
     private static Field allTagsField;
