@@ -24,11 +24,7 @@
     ]
   },
   "mixins": [
-    "fiddle-client.mixins.json",
-    {
-      "config": "fiddle-client.client.mixins.json",
-      "environment": "client"
-    },
+    "fiddle-client.client.moredatadriven.mixins.json",
     {
       "config": "fiddle-client.client.clientview.mixins.json",
       "environment": "client"

@@ -4,8 +4,10 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
     "AcceptAllResourcePacksMixin",
-    "ResetMultiplayerConnectionSetupFlagsMixin"
-	],
+    "ResetOnDisconnectMixin",
+    "UpdateStateOnStartLoginMixin",
+    "UpdateStateOnStartConfigureMixin"
+  ],
 	"injectors": {
 		"defaultRequire": 1
 	}
