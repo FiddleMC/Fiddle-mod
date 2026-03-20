@@ -24,7 +24,7 @@ public abstract class TemporaryRegistryModifier<T, R extends MappedRegistry<T>> 
 
     public final R registry;
 
-    private @Nullable List<Pair<Identifier, T>> resourcesAdded = null;
+    private @Nullable List<Pair<ResourceKey<T>, T>> resourcesAdded = null;
 
     TemporaryRegistryModifier(R registry) {
         this.registry = registry;
@@ -51,31 +51,33 @@ public abstract class TemporaryRegistryModifier<T, R extends MappedRegistry<T>> 
         this.registry.freeze();
     }
 
-    public void addAndRefreeze(List<Pair<Identifier, T>> resources) {
+    public void add(List<Pair<ResourceKey<T>, T>> resources) {
         if (!resources.isEmpty()) {
             this.resourcesAdded = resources;
-            for (Pair<Identifier, T> resource : resources) {
+            for (Pair<ResourceKey<T>, T> resource : resources) {
+                System.out.println("Adding resource " + resource.left() + " of type " + resource.right().getClass().getSimpleName());
                 Registry.register(this.registry, resource.left(), resource.right());
             }
-            this.refreeze();
         }
+    }
+
+    public void addAndRefreeze(List<Pair<ResourceKey<T>, T>> resources) {
+        this.add(resources);
+        this.refreeze();
     }
 
     public void remove() {
         if (this.resourcesAdded == null) return;
         this.unfreeze();
         for (int i = this.resourcesAdded.size() - 1; i >= 0; i--) {
-            Pair<Identifier, T> resource = this.resourcesAdded.get(i);
+            Pair<ResourceKey<T>, T> resource = this.resourcesAdded.get(i);
             this.remove(resource.left(), resource.right());
         }
         this.refreeze();
         this.resourcesAdded = null;
     }
 
-    public void remove(Identifier identifier, T resource) {
-
-        // Get the resource key
-        ResourceKey<T> key = ResourceKey.create(this.registry.key(), identifier);
+    public void remove(ResourceKey<T> resourceKey, T resource) {
 
         // Get the inner data structures of the registry
         MappedRegistryAccessor<T> accessor = this.getRegistryAccessor();
@@ -87,12 +89,12 @@ public abstract class TemporaryRegistryModifier<T, R extends MappedRegistry<T>> 
         var toId = accessor.getToId();
 
         // Remove the resource from the inner data structures
-        byKey.remove(key);
-        byLocation.remove(identifier);
+        byKey.remove(resourceKey);
+        byLocation.remove(resourceKey.identifier());
         byValue.remove(resource);
         int id = toId.removeInt(resource);
         byId.remove(id);
-        registrationInfos.remove(key);
+        registrationInfos.remove(resourceKey);
 
     }
 

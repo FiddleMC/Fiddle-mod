@@ -9,17 +9,14 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.fiddlemc.fiddle.client.clientview.mixin.ClientCommonPacketListenerImplAccessor;
 import org.fiddlemc.fiddle.client.moredatadriven.TemporaryRegistryModifiers;
 import org.fiddlemc.fiddle.impl.branding.FiddleNamespace;
+import org.fiddlemc.fiddle.impl.moredatadriven.clientmod.ClientModCustomContent;
 import org.fiddlemc.fiddle.impl.moredatadriven.clientmod.ClientModCustomContentPacketPayload;
+import org.fiddlemc.fiddle.impl.moredatadriven.minecraft.type.mixin.BlockBehaviourPropertiesAccessor;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -79,14 +76,12 @@ public final class FiddleProtocol {
             changeState(ClientModState.CLIENT_MOD_DETECTED, ClientModState.RECEIVED_CUSTOM_CONTENT);
             // Add the received content
             TemporaryRegistryModifiers.prepareToAddCustomContent();
-            System.out.println("Parsed content: " + payload.getContent());
+            ClientModCustomContent customContent = payload.getContent();
+            System.out.println("Parsed content type: " + customContent.getClass().getName());
+            System.out.println("Parsed content: " + customContent);
             TemporaryRegistryModifiers.addCustomContent(
-                List.of(
-                    Pair.of(Identifier.parse("example:test"), new Block(BlockBehaviour.Properties.of().setId(ResourceKey.create(BuiltInRegistries.BLOCK.key(), Identifier.parse("example:test")))))
-                ),
-                List.of(
-                    Pair.of(Identifier.parse("example:test"), new Item(new Item.Properties().setId(ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.parse("example:test")))))
-                )
+                customContent.blocks().stream().map(block -> Pair.of(((BlockBehaviourPropertiesAccessor) block.properties()).getId(), block)).toList(),
+                List.of()//TODO
             );
             System.out.println("Added custom content " + FiddleProtocol.getState());
             changeState(ClientModState.RECEIVED_CUSTOM_CONTENT, ClientModState.ADDED_CUSTOM_CONTENT);
@@ -125,6 +120,7 @@ public final class FiddleProtocol {
 
     private static void onDisconnect() {
         // Clear custom content, if present
+        int debugCount = 0;
         while (true) {
             if (FiddleProtocol.getState() == ClientModState.ADDED_CUSTOM_CONTENT) {
                 TemporaryRegistryModifiers.removeCustomContent();
@@ -133,6 +129,11 @@ public final class FiddleProtocol {
                 break;
             }
             if (FiddleProtocol.tryChangeState(Set.of(ClientModState.IDLE, ClientModState.HANDSHAKE_STARTED, ClientModState.CLIENT_MOD_DETECTED, ClientModState.CLIENT_MOD_NOT_DETECTED), ClientModState.REMOVED_CUSTOM_CONTENT)) {
+                break;
+            }
+            if (FiddleProtocol.getState() == ClientModState.RECEIVED_CUSTOM_CONTENT && debugCount++ >= 25) {
+                // Temporary debug escape: we currently end up here if an error occurs during receiving custom content
+                state.set(ClientModState.REMOVED_CUSTOM_CONTENT);
                 break;
             }
             Thread.onSpinWait();

@@ -42,6 +42,7 @@ public final class ClientModCustomContentPacketPayload implements CustomPacketPa
 
     public ClientModCustomContent getContent() {
         if (this.content == null) {
+            System.out.println("Content JSON is: " + this.contentJSON);
             this.content = ClientModCustomContent.CODEC.decode(JsonOps.INSTANCE, this.contentJSON).getOrThrow().getFirst();
         }
         return this.content;

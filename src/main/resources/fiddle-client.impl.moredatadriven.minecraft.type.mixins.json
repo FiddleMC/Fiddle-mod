@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "org.fiddlemc.fiddle.impl.moredatadriven.minecraft.type.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+    "BlockBehaviourPropertiesAccessor",
+    "ReplaceBlockBehaviourPropertiesCodecMixin",
+    "StairBlockAccessor",
+    "StairBlockMixin"
+  ],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

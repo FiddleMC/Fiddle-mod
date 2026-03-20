@@ -25,6 +25,7 @@
   },
   "mixins": [
     "fiddle-client.client.moredatadriven.mixins.json",
+    "fiddle-client.impl.moredatadriven.minecraft.type.mixins.json",
     {
       "config": "fiddle-client.client.clientview.mixins.json",
       "environment": "client"

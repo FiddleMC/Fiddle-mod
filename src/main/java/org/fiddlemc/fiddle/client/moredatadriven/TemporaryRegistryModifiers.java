@@ -1,7 +1,7 @@
 package org.fiddlemc.fiddle.client.moredatadriven;
 
 import it.unimi.dsi.fastutil.Pair;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import org.jspecify.annotations.Nullable;
@@ -42,8 +42,8 @@ public final class TemporaryRegistryModifiers {
     }
 
     public static void addCustomContent(
-        List<Pair<Identifier, Block>> blocks,
-        List<Pair<Identifier, Item>> items
+        List<Pair<ResourceKey<Block>, Block>> blocks,
+        List<Pair<ResourceKey<Item>, Item>> items
     ) {
         System.out.println("Adding custom content");
         initializeIfNecessary();
