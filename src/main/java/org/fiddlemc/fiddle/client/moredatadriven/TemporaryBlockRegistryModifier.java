@@ -28,13 +28,11 @@ public final class TemporaryBlockRegistryModifier extends TemporaryRegistryModif
             // Set base for stairs
             for (Pair<ResourceKey<Block>, Block> resource : resources) {
                 if (resource.right() instanceof StairBlock stairBlock) {
-                    System.out.println("Fixing stair block " + resource.right());
                     String baseStateString = ((BaseStateStringBlock) stairBlock).fiddle$getBaseStateString();
                     BlockState baseState = BlockStateStringConversion.blockStateFromString(baseStateString);
                     StairBlockAccessor accessor = (StairBlockAccessor) stairBlock;
                     accessor.setBaseState(baseState);
                     accessor.setBase(baseState.getBlock());
-                    System.out.println("Base state string was " + baseStateString + ", result is " + baseState);
                 }
             }
         }

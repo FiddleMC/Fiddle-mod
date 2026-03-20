@@ -46,14 +46,12 @@ public final class TemporaryRegistryModifiers {
         Supplier<List<Pair<ResourceKey<Block>, Block>>> blocks,
         Supplier<List<Pair<ResourceKey<Item>, Item>>> items
     ) {
-        System.out.println("Adding custom content");
         initializeIfNecessary();
         blockRegistryModifier.addAndRefreeze(blocks.get());
         itemRegistryModifier.addAndRefreeze(items.get());
     }
 
     public static void removeCustomContent() {
-        System.out.println("Removing custom content");
         initializeIfNecessary();
         blockRegistryModifier.remove();
         itemRegistryModifier.remove();
