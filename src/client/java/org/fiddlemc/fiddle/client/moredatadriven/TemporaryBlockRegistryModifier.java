@@ -1,6 +1,7 @@
 package org.fiddlemc.fiddle.client.moredatadriven;
 
 import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.DefaultedMappedRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -9,7 +10,10 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.fiddlemc.fiddle.impl.moredatadriven.minecraft.type.BlockStateStringConversion;
 import org.fiddlemc.fiddle.impl.moredatadriven.minecraft.type.BaseStateStringBlock;
+import org.fiddlemc.fiddle.impl.moredatadriven.minecraft.type.PropertiesExtensions;
+import org.fiddlemc.fiddle.impl.moredatadriven.minecraft.type.mixin.ItemBlockRenderTypesAccessor;
 import org.fiddlemc.fiddle.impl.moredatadriven.minecraft.type.mixin.StairBlockAccessor;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -35,7 +39,27 @@ public final class TemporaryBlockRegistryModifier extends TemporaryRegistryModif
                     accessor.setBase(baseState.getBlock());
                 }
             }
+            // Add render types
+            for (Pair<ResourceKey<Block>, Block> resource : resources) {
+            }
         }
+    }
+
+    @Override
+    public void add(ResourceKey<Block> resourceKey, Block resource) {
+        super.add(resourceKey, resource);
+        // Add render type
+        @Nullable ChunkSectionLayer chunkSectionLayer = ((PropertiesExtensions) resource.properties()).fiddle$getChunkSectionLayer();
+        if (chunkSectionLayer != null) {
+            ItemBlockRenderTypesAccessor.getTypeByBlock().put(resource, chunkSectionLayer);
+        }
+    }
+
+    @Override
+    public void remove(ResourceKey<Block> resourceKey, Block resource) {
+        super.remove(resourceKey, resource);
+        // Remove render type
+        ItemBlockRenderTypesAccessor.getTypeByBlock().remove(resource);
     }
 
 }

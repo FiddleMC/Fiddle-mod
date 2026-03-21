@@ -5,11 +5,14 @@
   "mixins": [
     "BlockBehaviourPropertiesAccessor",
     "BlockItemCodecMixin",
+    "BlocksStatePredicatesAccessor",
     "EggItemCodecMixin",
     "FeatureFlagRegistryAccessor",
+    "ItemBlockRenderTypesAccessor",
     "ItemCodecMixin",
     "ItemKeepPropertiesMixin",
     "ItemPropertiesAccessor",
+    "PropertiesExtensionsMixin",
     "ReplaceBlockBehaviourPropertiesCodecMixin",
     "StairBlockAccessor",
     "StairBlockMixin"

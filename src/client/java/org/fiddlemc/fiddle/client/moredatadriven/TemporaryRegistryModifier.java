@@ -61,9 +61,13 @@ public abstract class TemporaryRegistryModifier<T, R extends MappedRegistry<T>> 
         if (!resources.isEmpty()) {
             this.resourcesAdded = resources;
             for (Pair<ResourceKey<T>, T> resource : resources) {
-                Registry.register(this.registry, resource.left(), resource.right());
+                this.add(resource.left(), resource.right());
             }
         }
+    }
+
+    public void add(ResourceKey<T> resourceKey, T resource) {
+        Registry.register(this.registry, resourceKey, resource);
     }
 
     public void addAndRefreeze(List<Pair<ResourceKey<T>, T>> resources) {

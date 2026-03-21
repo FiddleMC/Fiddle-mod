@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.fiddlemc.fiddle.impl.moredatadriven.minecraft.type.BaseStateStringBlock;
+import org.fiddlemc.fiddle.impl.moredatadriven.minecraft.type.StairBlockCodec;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -16,6 +17,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import java.util.function.BiFunction;
 
 @Mixin(StairBlock.class)
 public class StairBlockMixin implements BaseStateStringBlock {
@@ -27,16 +29,7 @@ public class StairBlockMixin implements BaseStateStringBlock {
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void fiddle$replaceCodec(CallbackInfo ci) {
-        CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(
-                com.mojang.serialization.Codec.STRING.fieldOf("base_state").forGetter(stairBlock -> null /* Only needs to happen on server */),
-                BlockBehaviour.Properties.CODEC.fieldOf("properties").forGetter(BlockBehaviour::properties) // StairBlock#propertiesCodec()
-            ).apply(instance, (baseStateString, properties) -> {
-                StairBlock block = new StairBlock(Blocks.STONE.defaultBlockState() /* We replace it later */, properties);
-                ((BaseStateStringBlock) block).fiddle$setBaseStateString(baseStateString);
-                return block;
-            })
-        );
+        CODEC = StairBlockCodec.simpleStairCodec(StairBlock::new);
     }
 
     @Shadow
