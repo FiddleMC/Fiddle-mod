@@ -16,6 +16,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import org.fiddlemc.fiddle.impl.moredatadriven.minecraft.type.mixin.BlockBehaviourPropertiesAccessor;
 import org.fiddlemc.fiddle.impl.util.mojang.codec.EnumViaIdentifierCodec;
+import org.fiddlemc.fiddle.impl.util.mojang.codec.ProxyCodec;
 import org.fiddlemc.fiddle.impl.util.mojang.codec.StaticFieldViaIdentifierCodec;
 
 /**
@@ -23,14 +24,14 @@ import org.fiddlemc.fiddle.impl.util.mojang.codec.StaticFieldViaIdentifierCodec;
  */
 public final class BlockCodecs {
 
-    private static final Codec<ChunkSectionLayer> CHUNK_SECTION_LAYER_CODEC = new EnumViaIdentifierCodec<>(ChunkSectionLayer.class);
-    private static final Codec<MapColor> MAP_COLOR_CODEC = new StaticFieldViaIdentifierCodec<>(MapColor.class);
+    private static final Codec<ChunkSectionLayer> CHUNK_SECTION_LAYER_CODEC = new ProxyCodec<>(new EnumViaIdentifierCodec<>(ChunkSectionLayerProxy.class));
+    private static final Codec<MapColor> MAP_COLOR_CODEC = new ProxyCodec<>(new EnumViaIdentifierCodec<>(MapColorProxy.class));
     private static final Codec<BlockStateFunction<MapColor>> MAP_COLOR_FUNCTION_CODEC = BlockStateFunction.codec(MAP_COLOR_CODEC);
-    private static final Codec<SoundType> SOUND_TYPE_CODEC = new StaticFieldViaIdentifierCodec<>(SoundType.class);
+    private static final Codec<SoundType> SOUND_TYPE_CODEC = new ProxyCodec<>(new EnumViaIdentifierCodec<>(SoundTypeProxy.class));
     private static final Codec<BlockStateFunction<Integer>> LIGHT_EMISSION_CODEC = BlockStateFunction.codec(Codec.INT);
-    private static final Codec<PushReaction> PUSH_REACTION_CODEC = new EnumViaIdentifierCodec<>(PushReaction.class);
-    private static final Codec<NoteBlockInstrument> NOTE_BLOCK_INSTRUMENT_CODEC = new EnumViaIdentifierCodec<>(NoteBlockInstrument.class);
-    private static final Codec<BlockBehaviour.OffsetType> OFFSET_TYPE_CODEC = new EnumViaIdentifierCodec<>(BlockBehaviour.OffsetType.class);
+    private static final Codec<PushReaction> PUSH_REACTION_CODEC = new ProxyCodec<>(new EnumViaIdentifierCodec<>(PushReactionProxy.class));
+    private static final Codec<NoteBlockInstrument> NOTE_BLOCK_INSTRUMENT_CODEC = new ProxyCodec<>(new EnumViaIdentifierCodec<>(NoteBlockInstrumentProxy.class));
+    private static final Codec<BlockBehaviour.OffsetType> OFFSET_TYPE_CODEC = new ProxyCodec<>(new EnumViaIdentifierCodec<>(BlockBehaviourOffsetTypeProxy.class));
 
     public static final Codec<BlockBehaviour.Properties> PROPERTIES_CODEC = new Codec<>() {
 

@@ -15,6 +15,7 @@ import org.fiddlemc.fiddle.client.moredatadriven.mixin.MappedRegistryAccessor;
 import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
@@ -118,11 +119,18 @@ public abstract class TemporaryRegistryModifier<T, R extends MappedRegistry<T>> 
     static {
         try {
             allTagsField = Arrays.stream(MappedRegistry.class.getDeclaredFields())
-                .filter(f -> f.getType().getSimpleName().equals("TagSet"))
+                .filter(f -> !Modifier.isPrivate(f.getModifiers()) && !Modifier.isProtected(f.getModifiers()))
+                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                .filter(f -> Arrays.asList(MappedRegistry.class.getDeclaredClasses()).contains(f.getType()))
                 .findFirst()
                 .orElseThrow();
             allTagsField.setAccessible(true);
-            unboundMethod = allTagsField.getType().getDeclaredMethod("unbound");
+            unboundMethod = Arrays.stream(allTagsField.getType().getDeclaredMethods())
+                .filter(m -> !Modifier.isPrivate(m.getModifiers()) && !Modifier.isProtected(m.getModifiers()))
+                .filter(m -> Modifier.isStatic(m.getModifiers()))
+                .filter(m -> m.getParameterCount() == 0)
+                .findFirst()
+                .orElseThrow();
             unboundMethod.setAccessible(true);
         } catch (Exception e) {
             throw new RuntimeException(e);

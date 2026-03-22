@@ -4,7 +4,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -58,15 +60,34 @@ public enum KnownStatePredicate implements BlockBehaviour.StatePredicate {
         }
         // Use an ugly Reflection trick to detect whether the given predicate is Blocks::never or Blocks::always
         try {
-            Method m = predicate.getClass().getDeclaredMethod("writeReplace");
-            m.trySetAccessible();
-            SerializedLambda serializedLambda = (SerializedLambda) m.invoke(predicate);
+            List<Method> alwaysNeverMethods = Arrays.stream(Blocks.class.getDeclaredMethods())
+                .filter(m -> Modifier.isPublic(m.getModifiers()))
+                .filter(m -> Modifier.isStatic(m.getModifiers()))
+                .filter(m -> m.getReturnType().equals(Boolean.class))
+                .filter(m -> m.getParameterCount() == 3)
+                .filter(m -> m.getParameterTypes()[0].equals(BlockState.class))
+                .filter(m -> m.getParameterTypes()[1].equals(BlockGetter.class))
+                .filter(m -> m.getParameterTypes()[2].equals(BlockPos.class))
+                .toList();
+            alwaysNeverMethods.forEach(Method::trySetAccessible);
+            Method alwaysMethod;
+            Method neverMethod;
+            if ((boolean) alwaysNeverMethods.get(0).invoke(null, null, null, null)) {
+                alwaysMethod = alwaysNeverMethods.get(0);
+                neverMethod = alwaysNeverMethods.get(1);
+            } else {
+                alwaysMethod = alwaysNeverMethods.get(1);
+                neverMethod = alwaysNeverMethods.get(0);
+            }
+            Method writeReplaceMethod = predicate.getClass().getDeclaredMethod("writeReplace");
+            writeReplaceMethod.trySetAccessible();
+            SerializedLambda serializedLambda = (SerializedLambda) writeReplaceMethod.invoke(predicate);
             String implClass = serializedLambda.getImplClass();
-            if (implClass.equals("net/minecraft/world/level/block/Blocks")) {
+            if (implClass.endsWith("/" + Blocks.class.getSimpleName())) {
                 String implMethodName = serializedLambda.getImplMethodName();
-                if (implMethodName.equals("never")) {
+                if (implMethodName.equals(neverMethod.getName())) {
                     return NEVER;
-                } else if (implMethodName.equals("always")) {
+                } else if (implMethodName.equals(alwaysMethod.getName())) {
                     return ALWAYS;
                 }
             }
