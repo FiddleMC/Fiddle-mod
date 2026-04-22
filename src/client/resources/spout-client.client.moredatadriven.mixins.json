@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "spout.client.fabric.moredatadriven.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "HolderSetNamedAccessor",
+    "MappedRegistryAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

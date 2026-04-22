@@ -1,51 +1,50 @@
 {
   "schemaVersion": 1,
-  "id": "fiddle-client",
+  "id": "spout-client",
   "version": "${version}",
-  "name": "Fiddle client",
-  "description": "Automatically downloads and install custom blocks and items when joining Fiddle servers",
+  "name": "Spout client",
+  "description": "Automatically downloads and install modded blocks and items when joining Spout servers",
   "authors": [
     "Martijn Muijsers",
-    "Other FiddleMC contributors"
+    "Spout authors and contributors"
   ],
   "contact": {
-    "homepage": "https://fiddlemc.org/",
-    "sources": "https://github.com/FiddleMC/Fiddle-mod"
+    "sources": "https://github.com/FiddleMC/Spout-Fabric-client"
   },
-  "license": "Mostly GPL-3.0, see LICENSE.md for details",
-  "icon": "assets/fiddle/icon.png",
+  "license": "See the included LICENSE.txt",
+  "icon": "assets/spout/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "org.fiddlemc.fiddle.client.Fiddle"
+      "spout.client.fabric.Spout"
     ],
     "client": [
-      "org.fiddlemc.fiddle.client.FiddleClient"
+      "spout.client.fabric.SpoutClient"
     ]
   },
   "mixins": [
     {
-      "config": "fiddle-client.client.clientview.mixins.json",
+      "config": "spout-client.client.clientview.mixins.json",
       "environment": "client"
     },
     {
-      "config": "fiddle-client.client.moredatadriven.mixins.json",
+      "config": "spout-client.client.moredatadriven.mixins.json",
       "environment": "client"
     },
     {
-      "config": "fiddle-client.client.ui.loadingoverlay.mixins.json",
+      "config": "spout-client.client.ui.loadingoverlay.mixins.json",
       "environment": "client"
     },
     {
-      "config": "fiddle-client.client.ui.toast.mixins.json",
+      "config": "spout-client.client.ui.toast.mixins.json",
       "environment": "client"
     },
     {
-      "config": "fiddle-client.impl.content.block.mixins.json",
+      "config": "spout-client.impl.content.block.mixins.json",
       "environment": "client"
     },
     {
-      "config": "fiddle-client.impl.moredatadriven.minecraft.type.mixins.json",
+      "config": "spout-client.impl.moredatadriven.minecraft.type.mixins.json",
       "environment": "client"
     }
   ],

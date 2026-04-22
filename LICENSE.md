@@ -1,4 +1,4 @@
-# Fiddle
+# Spout
 
 Code files, build files, workflow files and executable binaries are licensed under a complemented GPL-3.0
 (included in `license/Complemented-GPL-3.0.txt`),

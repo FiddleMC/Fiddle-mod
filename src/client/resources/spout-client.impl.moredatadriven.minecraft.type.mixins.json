@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "package": "spout.client.fabric.moredatadriven.minecraft.type.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BlockBehaviourPropertiesAccessor",
+    "BlockItemCodecMixin",
+    "BlocksStatePredicatesAccessor",
+    "EggItemCodecMixin",
+    "FeatureFlagRegistryAccessor",
+    "ItemBlockRenderTypesAccessor",
+    "ItemCodecMixin",
+    "ItemKeepPropertiesMixin",
+    "ItemPropertiesAccessor",
+    "PropertiesExtensionsMixin",
+    "ReplaceBlockBehaviourPropertiesCodecMixin",
+    "StairBlockAccessor",
+    "StairBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

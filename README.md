@@ -1,6 +1,6 @@
 <div align="center">
 
-  <!--<img src="src/main/resources/assets/fiddle/icon.png" alt="Spout logo" width="21%" align="right">-->
+  <!--<img src="src/main/resources/assets/spout/icon.png" alt="Spout logo" width="21%" align="right">-->
   <h1>
     Spout<br>client (Fabric)
   </h1>
@@ -49,4 +49,4 @@ Requires [Fabric API](https://modrinth.com/mod/fabric-api).
 
 ## Adding Spout server-side
 
-* Paper: [Spout server (Bukkit/Paper)](github.com/FiddleMC/Fiddle)
+* Paper: [Spout server (Paper/Bukkit)](https://github.com/FiddleMC/Spout-Paper-server)
