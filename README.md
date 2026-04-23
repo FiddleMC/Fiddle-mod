@@ -10,13 +10,14 @@
     when joining a server
   </h3>
 
-[![Discord](https://img.shields.io/discord/1091830813240348732?color=5865F2&label=discord&style=for-the-badge)](https://discord.gg/EduvcVmKS7)
+[![Discord](https://img.shields.io/discord/1091830813240348732?color=5865F2&label=discord&style=for-the-badge)](https://discord.gg/EduvcVmKS7) [![1.21.11](https://img.shields.io/badge/Latest_version-1.21.11-4fa31a?style=for-the-badge)](https://github.com/FiddleMC/Spout-Fabric-client/actions)
 
 </div>
 
 ## Introduction
 
-The Spout client mod is an automatic modloader for Spout servers: when you join a multiplayer server, the server's modded blocks and items will be installed automatically.
+The Spout client mod is an automatic modloader for Spout servers: when you join a multiplayer server,
+the server's modded blocks and items will be installed automatically.
 
 &nbsp;&nbsp;&nbsp;&nbsp;✓&nbsp;&nbsp;Supports non-vanilla block shapes, like vertical slabs
 <br>
@@ -26,6 +27,13 @@ The Spout client mod is an automatic modloader for Spout servers: when you join 
 
 ## Installation
 
+Download the latest JAR from [GitHub Actions](https://github.com/FiddleMC/Spout-Fabric-client/actions),
+under **Artifacts**.
+
+Place the file into the `mods` folder.
+
+Requires [Fabric API](https://modrinth.com/mod/fabric-api).
+
 <div align="center">
   <table>
     <tr>
@@ -33,19 +41,13 @@ The Spout client mod is an automatic modloader for Spout servers: when you join 
         <h1>🔨</h1>
       </td>
       <td valign="center">
-        Spout is currently in beta testing.
-        <br>
-        It works, but compatibility with other mods has not been tested fully.
+        Spout has been tested, but compatibility with other mods has not been explored fully.
         <br>
         Please report if you encounter any issues.
       </td>
     </tr>
   </table>
 </div>
-
-Place the `.jar` file into the `mods` folder.
-
-Requires [Fabric API](https://modrinth.com/mod/fabric-api).
 
 ## Adding Spout server-side
 
