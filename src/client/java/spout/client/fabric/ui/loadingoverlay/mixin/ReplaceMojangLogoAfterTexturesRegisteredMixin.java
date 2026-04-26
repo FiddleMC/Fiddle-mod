@@ -4,7 +4,6 @@ import net.minecraft.client.gui.screens.LoadingOverlay;
 import net.minecraft.client.renderer.texture.ReloadableTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.Identifier;
-import spout.client.fabric.ui.loadingoverlay.LogoIdentifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,7 +18,7 @@ public abstract class ReplaceMojangLogoAfterTexturesRegisteredMixin {
     )
     private void afterTextureRegistered(Identifier id, ReloadableTexture texture, CallbackInfo ci) {
         if (id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE) && id.getPath().equals("textures/environment/end_sky.png") && LoadingOverlay.MOJANG_STUDIOS_LOGO_LOCATION.getNamespace().equals(Identifier.DEFAULT_NAMESPACE)) {
-            LoadingOverlayLogoAccessor.setMojangStudiosLogoLocation(LogoIdentifier.IDENTIFIER);
+            // SwitchOverlayLogo.setSpout();
         }
     }
 

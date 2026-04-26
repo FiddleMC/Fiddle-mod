@@ -6,9 +6,9 @@ import spout.common.branding.SpoutNamespace;
 /**
  * Holder for {@link #IDENTIFIER}.
  */
-public final class LogoIdentifier {
+public final class SpoutLogoIdentifier {
 
-    private LogoIdentifier() {
+    private SpoutLogoIdentifier() {
         throw new UnsupportedOperationException();
     }
 

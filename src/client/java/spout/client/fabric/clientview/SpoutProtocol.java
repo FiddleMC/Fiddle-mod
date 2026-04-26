@@ -12,6 +12,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import spout.client.fabric.clientview.mixin.ClientCommonPacketListenerImplAccessor;
 import spout.client.fabric.moredatadriven.TemporaryRegistryModifiers;
+import spout.client.fabric.ui.loadingoverlay.SwitchOverlayStyle;
 import spout.common.branding.SpoutNamespace;
 import spout.common.moredatadriven.clientmodprotocol.ClientModCustomContentPacketPayload;
 import spout.common.moredatadriven.clientmodprotocol.ClientModCustomContentReceiving;
@@ -53,6 +54,7 @@ public final class SpoutProtocol {
                         int responseProtocolVersion = -1; // In case of failure, respond with an invalid version
                         if (isBestProtocolVersionAcceptable) {
                             changeState(ClientModState.HANDSHAKE_STARTED, ClientModState.CLIENT_MOD_DETECTED);
+                            SwitchOverlayStyle.setSpout();
                             responseProtocolVersion = bestProtocolVersion;
                         }
                         // Respond
@@ -103,6 +105,7 @@ public final class SpoutProtocol {
     }
 
     private static void onDisconnect() {
+        SwitchOverlayStyle.setMojang();
         // Clear custom content, if present
         while (true) {
             if (SpoutProtocol.getState() == ClientModState.ADDED_CUSTOM_CONTENT) {

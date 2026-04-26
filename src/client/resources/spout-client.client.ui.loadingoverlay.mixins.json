@@ -3,8 +3,10 @@
   "package": "spout.client.fabric.ui.loadingoverlay.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "LoadingOverlayLogoAccessor",
-    "ReplaceLoadingOverlayMixin",
+    "ChangePositionsOfSpoutLogoLoadingOverlayMixin",
+    "LoadingOverlayLogoLocationAccessor",
+    "ReplaceColorsAndSizesOverlayMixin",
+    "ReplaceLogoWhenRegisteringTexturesLoadingOverlayMixin",
     "ReplaceMojangLogoAfterTexturesRegisteredMixin"
   ],
   "injectors": {
